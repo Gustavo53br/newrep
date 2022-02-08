@@ -1,0 +1,404 @@
+{% set topbar_visibility = settings.topbar_visible|default(0) %}
+{% set topbar_content = settings.topbar_content ? settings.topbar_content : false %}
+{% set header_type = settings.header_type|default(2) %}
+{% set user_ico = settings.header_img_1 ? settings.header_img_1 : false %}
+{% set user_ico_svg = settings.header_svg_1 ? settings.header_svg_1 : false %}
+{% set cart_ico = settings.header_img_2 ? settings.header_img_2 : false %}
+{% set cart_ico_svg = settings.header_svg_2 ? settings.header_svg_2 : false %}
+{% set search_ico = settings.header_img_3 ? settings.header_img_3 : false %}
+{% set search_ico_svg = settings.header_svg_3 ? settings.header_svg_3 : false %}
+{% set logo_d_height = settings.logo_desktop_height != "" ? settings.logo_desktop_height %}
+{% set logo_m_height = settings.logo_mobile_height != "" ? settings.logo_desktop_height %}
+
+{% if topbar_visibility != 0 and topbar_content %}
+<section id="topbar" class="py-2 {{topbar_visibility == 1 ? 'd-none d-lg-block'}} {{topbar_visibility == 2 ? 'd-block d-lg-hide'}}">
+ <div class="container text-center ">
+  {{topbar_content}}
+ </div>
+</section>
+{% endif %}
+
+{% if header_type in [1,3] %}
+<div class="fixed-search text-center search-desktop">
+ <form id="search-form" class="m-auto px-5 no-outline" role="form" action="{{ links.search }}" method="get">
+  <button type="button" class="btn toggle-search close-btn mb-3"></button>
+  <p class="text-center mb-5">O que você procura?</p>
+  <div class="relative-form">
+   <input type="hidden" name="loja" value="{{ store.id }}">
+   <input type="text" class="form-control p3" type="text" placeholder="{{ Translation('buscar') }}" name="palavra_busca" data-tray-tst="busca_palavra" />
+   <button class="btn" data-tray-tst="botao_buscar" type="submit">
+    {% if search_ico_svg %}
+    <div class="custom-ico-svg">
+     {{search_ico_svg}}
+    </div>
+    {% elseif search_ico %}
+    <div class="custom-ico">
+     <img src="{{ themePath }}{{ search_ico }}">
+    </div>
+    {% else %}
+    <i class="fa fa-search  h3 m-0 va-middle"></i>
+    {% endif %}
+   </button>
+  </div>
+ </form>
+</div>
+{% endif %}
+{% if header_type == 1 %}
+<header class="py-1 header-1 d-none d-lg-block ">
+ <div class="container">
+  <div class="row d-flex align-items-center justify-content-center">
+   <div class="col-auto">
+    {% element 'snippets/alpix-logo' %}
+   </div>
+   <div class="col menu menu-desktop">
+    {% element 'snippets/alpix-menu' %}
+   </div>
+   <div class="col-auto">
+    <ul class="m-0 p-0 aligm-items-center" id="alpix-functions">
+     <li class="list-inline-item">
+      <button class="btn toggle-search" type="button">
+
+       <div class="custom-ico-svg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+         <path fill-rule="evenodd" clip-rule="evenodd" d="M0 7.92682C0 3.55609 3.55609 0 7.92682 0C12.2978 0 15.8536 3.55609 15.8536 7.92682C15.8536 9.8494 15.1657 11.6143 14.023 12.9882L17.7857 16.7509C18.0716 17.0365 18.0716 17.5 17.7857 17.7856C17.6428 17.9285 17.4555 18 17.2684 18C17.0811 18 16.894 17.9285 16.7511 17.7856L12.9884 14.0229C11.6144 15.1656 9.84947 15.8536 7.92682 15.8536C3.55609 15.8536 0 12.2978 0 7.92682ZM1.46341 7.92685C1.46341 11.4907 4.36292 14.3903 7.92682 14.3903C11.4907 14.3903 14.3902 11.4907 14.3902 7.92682C14.3902 4.36292 11.4907 1.46341 7.92682 1.46341C4.36292 1.46341 1.46341 4.36296 1.46341 7.92685Z" fill="white" />
+        </svg>
+       </div>
+       <span>Buscar</span>
+      </button>
+     </li>
+     <li class="list-inline-item  user-options">
+      <div class="dropdown">
+       <button type="button">
+        {% if user_ico_svg %}
+        <div class="custom-ico-svg">
+         {{user_ico_svg}}
+
+        </div><span>Minha conta</span>
+        {% elseif user_ico %}
+        <div class="custom-ico">
+         <img src="{{ themePath }}{{ user_ico }}">
+        </div>
+        {% else %}
+        <i class="fa fa-user  h3 m-0 va-middle"></i>
+        {% endif %}
+       </button>
+       <ul class="dropdown-menu">
+        <li class="cta mx-4 my-2">
+         <span class="tray-hide" data-logged-user="true">
+          <a href="{{ links.central }}" class="transition opacity" data-tray-tst="meu_cadastro">
+           <span data-customer="name"></span>
+          </a>
+         </span>
+         <span class="tray-hide" data-logged-user="false">
+          <a href="{{ links.login }}" class="transition opacity" data-tray-tst="login" class="{{ utils.is_https ? 'modal-login' }}">{{ Translation('login') }}</a>
+         </span>
+        </li>
+        <li class="divider"></li>
+        <li class="mx-4 my-2 tray-hide" data-logged-user="false">
+         <a href="{{ links.register }}" data-tray-tst="cadastro">{{ Translation('cadastre_se') }}</a>
+        </li>
+        <li class="mx-4 my-2 tray-hide" data-logged-user="false">
+         <a href="{{ links.orders }}" data-tray-tst="meus_pedidos">{{ Translation('meus_pedidos') }}</a>
+        </li>
+        <li class="mx-4 my-2 tray-hide" data-logged-user="true">
+         <a href="{{ links.logout }}">{{ Translation('sair') }}</a>
+        </li>
+       </ul>
+      </div>
+     </li>
+     <li class="list-inline-item">
+      <div class="cart-resume">
+       <a href="{{links.cart}}">
+        {% if cart_ico_svg %}
+        <div class="custom-ico-svg">
+         {{cart_ico_svg}}
+        </div>
+        {% elseif cart_ico %}
+        <div class="custom-ico">
+         <img src="{{ themePath }}{{ cart_ico }}">
+        </div>
+        {% else %}
+        <i class="fa fa-shopping-cart  h3 m-0 va-middle"></i>
+        {% endif %}
+        <span class="number" data-cart="amount"></span>
+       </a>
+      </div>
+     </li>
+    </ul>
+   </div>
+  </div>
+ </div>
+</header>
+{% elseif header_type == 2 %}
+<header class="header-2  d-none d-lg-block  ">
+ <div class="header-middle py-4">
+  <div class="container">
+   <div class="row d-flex align-items-center justify-content-center">
+    <div class="col-auto">
+     {% element 'snippets/alpix-logo' %}
+    </div>
+    <div class="col px-5 search-desktop">
+     <form id="search-form" class="m-0 no-outline" role="form" action="{{ links.search }}" method="get">
+      <div class="relative-form">
+       <input type="hidden" name="loja" value="{{ store.id }}">
+       <input type="text" class="form-control p3" type="text" placeholder="{{ Translation('buscar') }}" name="palavra_busca" data-tray-tst="busca_palavra" />
+       <button class="btn" data-tray-tst="botao_buscar" type="submit">
+        {% if search_ico_svg %}
+        <div class="custom-ico-svg">
+         {{search_ico_svg}}
+        </div>
+        {% elseif search_ico %}
+        <div class="custom-ico">
+         <img src="{{ themePath }}{{ search_ico }}">
+        </div>
+        {% else %}
+        <i class="fa fa-search  h3 m-0 va-middle"></i>
+        {% endif %}
+       </button>
+      </div>
+     </form>
+    </div>
+    <div class="col-auto">
+     <ul class="m-0 p-0 aligm-items-center" id="alpix-functions">
+      <li class="list-inline-item  user-options">
+       <div class="dropdown">
+        <button type="button">
+         {% if user_ico_svg %}
+         <div class="custom-ico-svg">
+          {{user_ico_svg}}
+         </div>
+         {% elseif user_ico %}
+         <div class="custom-ico">
+          <img src="{{ themePath }}{{ user_ico }}">
+         </div>
+         {% else %}
+         <i class="fa fa-user  h3 m-0 va-middle"></i>
+         {% endif %}
+        </button>
+        <ul class="dropdown-menu">
+         <li class="cta mx-4 my-2">
+          <span class="tray-hide" data-logged-user="true">
+           <a href="{{ links.central }}" class="transition opacity" data-tray-tst="meu_cadastro">
+            <span data-customer="name"></span>
+           </a>
+          </span>
+          <span class="tray-hide" data-logged-user="false">
+           <a href="{{ links.login }}" class="transition opacity" data-tray-tst="login" class="{{ utils.is_https ? 'modal-login' }}">{{ Translation('login') }}</a>
+          </span>
+         </li>
+         <li class="divider"></li>
+         <li class="mx-4 my-2 tray-hide" data-logged-user="false">
+          <a href="{{ links.register }}" data-tray-tst="cadastro">{{ Translation('cadastre_se') }}</a>
+         </li>
+         <li class="mx-4 my-2 tray-hide" data-logged-user="false">
+          <a href="{{ links.orders }}" data-tray-tst="meus_pedidos">{{ Translation('meus_pedidos') }}</a>
+         </li>
+         <li class="mx-4 my-2 tray-hide" data-logged-user="true">
+          <a href="{{ links.logout }}">{{ Translation('sair') }}</a>
+         </li>
+        </ul>
+       </div>
+      </li>
+      <li class="list-inline-item">
+       <div class="cart-resume">
+        <a href="{{links.cart}}">
+         {% if cart_ico_svg %}
+         <div class="custom-ico-svg">
+          {{cart_ico_svg}}
+         </div>
+         {% elseif cart_ico %}
+         <div class="custom-ico">
+          <img src="{{ themePath }}{{ cart_ico }}">
+         </div>
+         {% else %}
+         <i class="fa fa-shopping-cart  h3 m-0 va-middle"></i>
+         {% endif %}
+         <span class="number" data-cart="amount"></span>
+        </a>
+       </div>
+      </li>
+     </ul>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="menu">
+  <div class="container">
+   <div class="row">
+    <div class="col menu menu-desktop">
+     {% element 'snippets/alpix-menu' %}
+    </div>
+   </div>
+  </div>
+ </div>
+</header>
+{% elseif header_type == 3 %}
+<header class="header-3  d-none d-lg-block  ">
+ <div class="header-middle py-4">
+  <div class="container">
+   <div class="row d-flex align-items-center justify-content-center">
+    <div class="col-4">
+     <button class="btn toggle-search">
+      {% if search_ico_svg %}
+      <div class="custom-ico-svg">
+       {{search_ico_svg}}
+      </div>
+      {% elseif search_ico %}
+      <div class="custom-ico">
+       <img src="{{ themePath }}{{ search_ico }}">
+      </div>
+      {% else %}
+      <i class="fa fa-search  h3 m-0 va-middle"></i>
+      {% endif %}
+     </button>
+    </div>
+    <div class="col-4 text-center">
+     {% element 'snippets/alpix-logo' %}
+    </div>
+    <div class="col-4 justify-content-end text-right">
+     <ul class="m-0 p-0 aligm-items-center" id="alpix-functions">
+      <li class="list-inline-item user-options">
+       <div class="dropdown">
+        <button type="button">
+         {% if user_ico_svg %}
+         <div class="custom-ico-svg">
+          {{user_ico_svg}}
+         </div>
+         {% elseif user_ico %}
+         <div class="custom-ico">
+          <img src="{{ themePath }}{{ user_ico }}">
+         </div>
+         {% else %}
+         <i class="fa fa-user  h3 m-0 va-middle"></i>
+         {% endif %}
+        </button>
+        <ul class="dropdown-menu">
+         <li class="cta mx-4 my-2">
+          <span class="tray-hide" data-logged-user="true">
+           <a href="{{ links.central }}" class="transition opacity" data-tray-tst="meu_cadastro">
+            <span data-customer="name"></span>
+           </a>
+          </span>
+          <span class="tray-hide" data-logged-user="false">
+           <a href="{{ links.login }}" class="transition opacity" data-tray-tst="login" class="{{ utils.is_https ? 'modal-login' }}">{{ Translation('login') }}</a>
+          </span>
+         </li>
+         <li class="divider"></li>
+         <li class="mx-4 my-2 tray-hide" data-logged-user="false">
+          <a href="{{ links.register }}" data-tray-tst="cadastro">{{ Translation('cadastre_se') }}</a>
+         </li>
+         <li class="mx-4 my-2 tray-hide" data-logged-user="false">
+          <a href="{{ links.orders }}" data-tray-tst="meus_pedidos">{{ Translation('meus_pedidos') }}</a>
+         </li>
+         <li class="mx-4 my-2 tray-hide" data-logged-user="true">
+          <a href="{{ links.logout }}">{{ Translation('sair') }}</a>
+         </li>
+        </ul>
+       </div>
+      </li>
+      <li class="list-inline-item">
+       <div class="cart-resume">
+        <a href="{{links.cart}}">
+         {% if cart_ico_svg %}
+         <div class="custom-ico-svg">
+          {{cart_ico_svg}}
+         </div>
+         {% elseif cart_ico %}
+         <div class="custom-ico">
+          <img src="{{ themePath }}{{ cart_ico }}">
+         </div>
+         {% else %}
+         <i class="fa fa-shopping-cart  h3 m-0 va-middle"></i>
+         {% endif %}
+         <span class="number" data-cart="amount"></span>
+        </a>
+       </div>
+      </li>
+     </ul>
+    </div>
+   </div>
+  </div>
+ </div>
+ <div class="menu">
+  <div class="container">
+   <div class="row">
+    <div class="col menu menu-desktop">
+     {% element 'snippets/alpix-menu' %}
+    </div>
+   </div>
+  </div>
+ </div>
+</header>
+{% endif %}
+
+<div id="header-mobile" class=" d-lg-none py-3 px-0">
+ <div class="container">
+  <div class="row align-items-center">
+   <div class="col">
+    <button class="menu-btn toggle-menu" type="button"></button>
+   </div>
+   <div class="col-auto text-center">
+    {% element 'snippets/alpix-logo' %}
+   </div>
+   <div class="col">
+    <ul class="m-0 p-0 text-right" id="alpix-functions">
+     <li class="list-inline-item">
+      <div class="dropdown">
+       <a href="{{links.cart}}">
+        {% if cart_ico_svg %}
+        <div class="custom-ico-svg">
+         {{cart_ico_svg}}
+        </div>
+        {% elseif cart_ico %}
+        <div class="custom-ico">
+         <img src="{{ themePath }}{{ cart_ico }}">
+        </div>
+        {% else %}
+        <i class="fa fa-shopping-cart  h3 m-0 va-middle"></i>
+        {% endif %}
+        <span class="number" data-cart="amount"></span>
+       </a>
+      </div>
+     </li>
+    </ul>
+   </div>
+  </div>
+  <div class="row mt-4">
+   <div class="col search-mobile">
+   </div>
+  </div>
+ </div>
+</div>
+<div class="menu-mobile-container  {{settings.mobile_background}}">
+ <div class="menu-mobile">
+  <div class="user-mobile px-3">
+   <div class="row align-items-center p-3">
+    <div class="col-auto">
+     {% if user_ico_svg %}
+     <div class="custom-ico-svg">
+      {{user_ico_svg}}
+     </div>
+     {% elseif user_ico %}
+     <div class="custom-ico">
+      <img src="{{ themePath }}{{ user_ico }}">
+     </div>
+     {% else %}
+     <i class="fa fa-user  h3 m-0 va-middle"></i>
+     {% endif %}
+    </div>
+    <div class="col user-info">
+     <div class="tray-hide" data-logged-user="false">
+      <div>Olá <span>Visitante</span></div>
+      <div><a href="{{ links.login }}">Faça login</a> ou <a href="{{ links.register }}">Cadastre-se</a></div>
+     </div>
+     <div class="tray-hide" data-logged-user="true">
+      <div>Olá <span data-customer="name"></span></div>
+      <div><a href="{{ links.central }}">Minha Conta</a> / <a href="{{ links.logout }}">Não é você? Sair.</a></div>
+     </div>
+
+    </div>
+   </div>
+   <button class="toggle-menu close-btn"></button>
+  </div>
+ </div>
+</div>
